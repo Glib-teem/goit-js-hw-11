@@ -1,6 +1,5 @@
 import axios from 'axios';
 
-// Замість хардкодженого ключа — використовуємо змінну з оточення
 const API_KEY = import.meta.env.VITE_PIXABAY_API_KEY;
 const BASE_URL = 'https://pixabay.com/api/';
 
