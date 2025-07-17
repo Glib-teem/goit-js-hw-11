@@ -1,16 +1,16 @@
 import axios from 'axios';
 
-const API_KEY = '51358169-fa0c0ba6de1b0bb5150f64058';
+// Замість хардкодженого ключа — використовуємо змінну з оточення
+const API_KEY = import.meta.env.VITE_PIXABAY_API_KEY;
 const BASE_URL = 'https://pixabay.com/api/';
 
 export async function getImagesByQuery(query) {
   if (!API_KEY || API_KEY === 'ВСТАВ_СВІЙ_КЛЮЧ_ТУТ') {
     throw new Error(
-      'Pixabay API key is missing. Please add it to pixabay-api.js'
+      'Pixabay API key is missing. Please add it to your .env file'
     );
   }
 
-  // Валідація запиту
   if (!query || query.trim() === '') {
     throw new Error('Search query cannot be empty');
   }
@@ -27,14 +27,12 @@ export async function getImagesByQuery(query) {
   try {
     const response = await axios.get(BASE_URL, { params });
 
-    // Перевірка відповіді
     if (!response.data || !Array.isArray(response.data.hits)) {
       throw new Error('Invalid response from Pixabay API');
     }
 
     return response.data;
   } catch (error) {
-    // обробка помилок
     if (error.response) {
       const status = error.response.status;
       const message = error.response.data?.error || error.message;
