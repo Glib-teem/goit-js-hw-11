@@ -4,12 +4,6 @@ const API_KEY = import.meta.env.VITE_PIXABAY_API_KEY;
 const BASE_URL = 'https://pixabay.com/api/';
 
 export async function getImagesByQuery(query) {
-  // if (!API_KEY || API_KEY === 'ВСТАВ_СВІЙ_КЛЮЧ_ТУТ') {
-  //   throw new Error(
-  //     'Pixabay API key is missing. Please add it to your .env file'
-  //   );
-  // }
-
   if (!query || query.trim() === '') {
     throw new Error('Search query cannot be empty');
   }
