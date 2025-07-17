@@ -1,30 +1,55 @@
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
+import iziToast from 'izitoast';
+import 'izitoast/dist/css/iziToast.min.css';
+
 const galleryEl = document.querySelector('.gallery');
 const loaderEl = document.querySelector('.loader');
 
-// Перевірка наявності елементів
+// Перевірка наявності елементів з повідомленням
 if (!galleryEl) {
-  console.error(
-    'Gallery element not found! Make sure you have element with class "gallery"'
-  );
+  iziToast.error({
+    title: 'Gallery not found',
+    message: 'Element with class "gallery" is missing from the page.',
+    position: 'topRight',
+  });
+  console.error('Gallery element not found!');
 }
 
 if (!loaderEl) {
-  console.error(
-    'Loader element not found! Make sure you have element with class "loader"'
-  );
+  iziToast.error({
+    title: 'Loader not found',
+    message: 'Element with class "loader" is missing from the page.',
+    position: 'topRight',
+  });
+  console.error('Loader element not found!');
 }
 
-// Ініціалізую SimpleLightbox
-const lightbox = new SimpleLightbox('.gallery a', {
-  captionsData: 'alt',
-  captionDelay: 250,
-});
+// Ініціалізація SimpleLightbox з обробкою помилок
+let lightbox;
+
+try {
+  lightbox = new SimpleLightbox('.gallery a', {
+    captionsData: 'alt',
+    captionDelay: 250,
+  });
+} catch (err) {
+  iziToast.error({
+    title: 'Lightbox Error',
+    message: `Failed to initialize lightbox: ${err.message}`,
+    position: 'topRight',
+  });
+  console.error('SimpleLightbox initialization error:', err);
+}
 
 export function createGallery(images) {
   if (!Array.isArray(images) || images.length === 0) {
+    iziToast.info({
+      title: 'No Images',
+      message: 'No images found to display.',
+      position: 'topRight',
+    });
     console.warn('No images to display');
     return;
   }
@@ -54,24 +79,52 @@ export function createGallery(images) {
     )
     .join('');
 
-  galleryEl.insertAdjacentHTML('beforeend', markup);
-  lightbox.refresh(); // Оновлюю SimpleLightbox
+  galleryEl?.insertAdjacentHTML('beforeend', markup);
+
+  try {
+    lightbox?.refresh();
+  } catch (err) {
+    iziToast.warning({
+      title: 'Lightbox Update Failed',
+      message: 'Unable to refresh image preview.',
+      position: 'topRight',
+    });
+    console.error('Lightbox refresh error:', err);
+  }
 }
 
 export function clearGallery() {
   if (galleryEl) {
     galleryEl.innerHTML = '';
+  } else {
+    iziToast.warning({
+      title: 'Gallery Missing',
+      message: 'Cannot clear gallery — element is missing.',
+      position: 'topRight',
+    });
   }
 }
 
 export function showLoader() {
   if (loaderEl) {
     loaderEl.classList.remove('is-hidden');
+  } else {
+    iziToast.warning({
+      title: 'Loader Missing',
+      message: 'Cannot show loader — element is missing.',
+      position: 'topRight',
+    });
   }
 }
 
 export function hideLoader() {
   if (loaderEl) {
     loaderEl.classList.add('is-hidden');
+  } else {
+    iziToast.warning({
+      title: 'Loader Missing',
+      message: 'Cannot hide loader — element is missing.',
+      position: 'topRight',
+    });
   }
 }
